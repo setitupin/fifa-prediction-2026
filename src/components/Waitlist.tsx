@@ -2,22 +2,45 @@
 
 import { useState, type FormEvent } from "react";
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const Spinner = () => (
+  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#d4a853" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+    <path d="M22 4L12 14.01l-3-3" />
+  </svg>
+);
+
+const DEFAULT_TITLE = "YOU&rsquo;RE ON THE LIST!";
+const DEFAULT_DESC = "Thanks for joining the waitlist. We&rsquo;ll keep you posted on early access and exclusive updates.";
+
 export default function Waitlist() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [successTitle, setSuccessTitle] = useState("YOU&rsquo;RE ON THE LIST!");
-  const [successDesc, setSuccessDesc] = useState(
-    "Thanks for joining the waitlist. We&rsquo;ll keep you posted on early access and exclusive updates."
-  );
+  const [successTitle, setSuccessTitle] = useState(DEFAULT_TITLE);
+  const [successDesc, setSuccessDesc] = useState(DEFAULT_DESC);
+
+  const showModal = (title: string, desc: string) => {
+    setEmail("");
+    setSuccessTitle(title);
+    setSuccessDesc(desc);
+    setShowSuccess(true);
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const val = email.trim();
-    if (!val || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+    if (!val || !EMAIL_RE.test(val)) {
       setError(true);
       setErrorMsg("Please enter a valid email address");
       return;
@@ -27,7 +50,7 @@ export default function Waitlist() {
     setLoading(true);
 
     try {
-      const res = await fetch("https://api.fifa26prediction.com/api/waitlist/", {
+      const res = await fetch("https://api8.fifa26prediction.com/api/waitlist/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: val }),
@@ -35,26 +58,18 @@ export default function Waitlist() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => null);
+        const msg = data?.message || data?.detail || data?.error || "Something went wrong. Please try again.";
         if (res.status === 409 && data?.error === "Email already registered") {
-          setEmail("");
-          setSubmitted(true);
-          setSuccessTitle("ALREADY ON THE LIST!");
-          setSuccessDesc("You&rsquo;re already signed up &mdash; no need to worry! We&rsquo;ll keep you posted on early access and exclusive updates.");
-          setShowSuccess(true);
-          return;
+          showModal("ALREADY ON THE LIST!", "You&rsquo;re already signed up &mdash; no need to worry! We&rsquo;ll keep you posted on early access and exclusive updates.");
+        } else {
+          showModal("SOMETHING WENT WRONG", msg);
         }
-        throw new Error(data?.message || data?.detail || "Something went wrong. Please try again.");
+        return;
       }
 
-      setEmail("");
-      setSubmitted(true);
-      setSuccessTitle("YOU&rsquo;RE ON THE LIST!");
-      setSuccessDesc("Thanks for joining the waitlist. We&rsquo;ll keep you posted on early access and exclusive updates.");
-      setShowSuccess(true);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
-      setError(true);
-      setErrorMsg(message);
+      showModal(DEFAULT_TITLE, DEFAULT_DESC);
+    } catch {
+      showModal("SOMETHING WENT WRONG", "Could not reach the server. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -86,9 +101,7 @@ export default function Waitlist() {
                 aria-label="Email address"
                 required
                 disabled={loading}
-                className={`w-full rounded-lg border bg-white/[0.04] px-5 py-[15px] font-sans text-[14px] text-white outline-none transition-colors placeholder:text-white/20 focus:border-gold/30 disabled:cursor-not-allowed disabled:opacity-50 ${
-                  error ? "border-red-500/40" : "border-white/10"
-                }`}
+                className={`w-full rounded-lg border bg-white/[0.04] px-5 py-[15px] font-sans text-[14px] text-white outline-none transition-colors placeholder:text-white/20 focus:border-gold/30 disabled:cursor-not-allowed disabled:opacity-50 ${error ? "border-red-500/40" : "border-white/10"}`}
               />
               {error && errorMsg && (
                 <p className="absolute -bottom-5 left-1 text-[11px] text-red-400">
@@ -103,10 +116,7 @@ export default function Waitlist() {
             >
               {loading ? (
                 <>
-                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                  </svg>
+                  <Spinner />
                   Joining...
                 </>
               ) : (
@@ -123,7 +133,7 @@ export default function Waitlist() {
 
       {showSuccess && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
           onClick={() => setShowSuccess(false)}
         >
           <div
@@ -131,10 +141,7 @@ export default function Waitlist() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-gold/10">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#d4a853" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
-                <path d="M22 4L12 14.01l-3-3" />
-              </svg>
+              <CheckIcon />
             </div>
 
             <h3 className="heading-anton mb-2 text-[22px] tracking-wide text-white">
