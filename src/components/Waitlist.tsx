@@ -18,8 +18,8 @@ const CheckIcon = () => (
   </svg>
 );
 
-const DEFAULT_TITLE = "YOU&rsquo;RE ON THE LIST!";
-const DEFAULT_DESC = "Thanks for joining the waitlist. We&rsquo;ll keep you posted on early access and exclusive updates.";
+const DEFAULT_TITLE = "YOU ARE ON THE LIST!";
+const DEFAULT_DESC = "Thanks for joining the waitlist. We will keep you posted on early access and exclusive updates.";
 
 export default function Waitlist() {
   const [email, setEmail] = useState("");
@@ -60,7 +60,7 @@ export default function Waitlist() {
         const data = await res.json().catch(() => null);
         const msg = data?.message || data?.detail || data?.error || "Something went wrong. Please try again.";
         if (res.status === 409 && data?.error === "Email already registered") {
-          showModal("ALREADY ON THE LIST!", "You&rsquo;re already signed up &mdash; no need to worry! We&rsquo;ll keep you posted on early access and exclusive updates.");
+          showModal("ALREADY ON THE LIST!", "You are already signed up &mdash; no need to worry! We&rsquo;ll keep you posted on early access and exclusive updates.");
         } else {
           showModal("SOMETHING WENT WRONG", msg);
         }
