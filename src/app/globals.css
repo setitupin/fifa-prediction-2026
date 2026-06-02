@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --gold: #D4AF37;
+    --usa: #0038A8;
+    --canada: #D80621;
+    --mexico: #006847;
+    --surface: #060606;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-black text-white antialiased;
+    font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  }
+
+  ::selection {
+    background: rgba(212, 175, 55, 0.25);
+    color: #fff;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg bg-gold px-7 py-3.5 text-[14px] font-bold text-black no-underline transition-all hover:brightness-110 active:brightness-95 focus:outline-none focus:ring-[3px] focus:ring-gold focus:ring-offset-[3px] focus:ring-offset-black;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-lg border border-white/15 bg-white/[0.06] px-7 py-3.5 text-[14px] font-semibold text-white no-underline backdrop-blur-md transition-all hover:bg-white/15 active:opacity-80 focus:outline-none focus:ring-[3px] focus:ring-white/30 focus:ring-offset-[3px] focus:ring-offset-black;
+  }
+
+  .glass-card {
+    @apply rounded-xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl transition-all duration-500 hover:border-white/15 hover:bg-white/[0.06];
+  }
+
+  .heading-anton {
+    font-family: "Anton", Impact, sans-serif;
+    @apply font-normal;
+  }
+}
+
+@layer utilities {
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #D4AF37, #f0d060);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-usa {
+    background: linear-gradient(135deg, #0038A8, #4066c0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .stadium-glow {
+    background: radial-gradient(ellipse at center 40%, rgba(212, 175, 55, 0.06) 0%, transparent 60%);
+  }
+
+  .grid-12 {
+    @apply grid grid-cols-4 gap-4 md:grid-cols-8 md:gap-6 lg:grid-cols-12 lg:gap-6;
+  }
+}
