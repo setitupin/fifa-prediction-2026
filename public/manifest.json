@@ -1,0 +1,17 @@
+{
+  "name": "World Cup Predictor 2026",
+  "short_name": "WC Predictor",
+  "description": "Predict every group, knockout, and final match of the 2026 FIFA World Cup. Compete with friends. Zero betting.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#D4AF37",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

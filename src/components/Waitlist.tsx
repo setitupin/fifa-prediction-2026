@@ -50,7 +50,7 @@ export default function Waitlist() {
     setLoading(true);
 
     try {
-      const res = await fetch("https://api8.fifa26prediction.com/api/waitlist/", {
+      const res = await fetch("https://api.fifa26prediction.com/api/waitlist/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: val }),
